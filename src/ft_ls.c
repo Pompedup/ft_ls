@@ -6,13 +6,13 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2018/10/21 20:43:24 by abezanni         ###   ########.fr       */
+/*   Updated: 2018/10/22 02:37:15 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	get_infos(t_data_folder *folder, t_data_file **file, t_dirent *dirent)
+void	get_infos(t_data_folder *folder, t_data_file **file, t_dirent *dirent, t_bool exec)
 {
 	if (folder->len_max < dirent->d_namlen)
 		folder->len_max = dirent->d_namlen;
@@ -21,24 +21,78 @@ void	get_infos(t_data_folder *folder, t_data_file **file, t_dirent *dirent)
 	{
 		if (ft_strcmp(dirent->d_name, (*file)->name) < 0)
 		{
-			new_t_data_file(file, dirent->d_name, dirent->d_type);
+			new_t_data_file(file, dirent->d_name, dirent->d_type, exec);
 			return ;
 		}
 		file = &((*file)->next);
 	}
-	new_t_data_file(file, dirent->d_name, dirent->d_type);
+	new_t_data_file(file, dirent->d_name, dirent->d_type, exec);
+}
+
+void	reordone(t_data_file **bgn, int repeat)
+{
+	t_data_file **move;
+	t_data_file *tmp;
+	int i;
+
+	move = &((*bgn)->next);
+	bgn = move;
+	while (*move && *bgn && repeat)
+	{
+		i = 0;
+		while (*move && i < repeat)
+		{
+			i++;
+			move = &((*move)->next);
+		}
+		if (*move)
+		{
+			tmp = *move;
+			*move = (*move)->next;
+			tmp->next = *bgn;
+			*bgn = tmp;
+			bgn = &(tmp->next);
+		}
+		if (!*move)
+		{
+			bgn = &((*bgn)->next);
+			if (bgn)
+				move = bgn;
+			repeat--;
+		}
+	}
 }
 
 void	one_on_x(t_data_folder *folder, size_t len_col)
 {
+	t_data_file	*file;
 	size_t	word;
 	size_t	i;
+	size_t	j;
 
 	i = 0;
-	while ((i + 1) * (folder->len_max + 1) < len_col)
+	while ((i + 1) * (folder->len_max + 1) <= len_col)
 		i++;
 	word = folder->nb_files / i + (folder->nb_files % i > 0);
-	ft_printf("%d - %d - %d - %d", word, i , len_col, folder->len_max);
+	i = folder->nb_files / word + (folder->nb_files % word > 0);
+	reordone(&folder->files, word - 1);
+	j = 0;
+	file = folder->files;
+	while (file)
+	{
+		if (file->type == 4)
+			ft_printf("\033[1;36m%-*s \033[0m", folder->len_max, file->name, file->type);
+		else if (file->exec)
+			ft_printf("\033[0;31m%-*s \033[0m", folder->len_max, file->name, file->type);
+		else
+			ft_printf("%-*s ", folder->len_max, file->name, file->type);
+		file = file->next;
+		j++;
+		if (j % i == 0)
+			ft_printf("\n");
+	}
+	if (j % i != 0)
+		ft_printf("\n");
 }
 
 void	aff(t_data_folder *folder)
@@ -55,31 +109,40 @@ void	aff(t_data_folder *folder)
 		while (current)
 		{
 			if (current->type == 4)
-				ft_printf("\033[1;36m");
-			ft_printf("%-*s ", folder->len_max, current->name, current->type);
-			if (current->type == 4)
-				ft_printf("\033[0m");
+				ft_printf("\033[1;36m%-*s \033[0m", folder->len_max, current->name, current->type);
+			else if (current->exec)
+				ft_printf("\033[0;31m%-*s \033[0m", folder->len_max, current->name, current->type);
+			else
+				ft_printf("%-*s ", folder->len_max, current->name, current->type);
 			current = current->next;
 		}
+		ft_printf("\n");
 	}
-	ft_printf("\n");
 }
 
 int		main(int ac, char **av)
 {
 	(void)ac;
-	(void)av;
 	DIR *testdir;
 	t_dirent *testdirent;
 	t_data_folder *data;
 
+	struct stat buf;
+	t_bool		exec;
 
-	testdir = opendir(".");
+
+	testdir = opendir(av[1]);
 	new_t_data_folder(&data);
 	while ((testdirent = readdir(testdir)))
 	{
 		if (*testdirent->d_name != '.')
-			get_infos(data, &data->files, testdirent);
+		{
+			if (stat(ft_strjoin(ft_strjoin(av[1], "/"), testdirent->d_name), &buf) != -1)
+				exec = buf.st_mode & 73;
+			else
+				exec = FALSE;
+			get_infos(data, &data->files, testdirent, exec);
+		}
 	}
 	aff(data);
 	// ft_printf("%s ", testdirent->d_name);
@@ -119,7 +182,15 @@ int		main(int ac, char **av)
 //  -1 en cas d'erreur ->errno
 // ◦ int stat(const char *restrict path, struct stat *restrict buf)
 // Recupere les informations du fichier pointe par path
-
+//   printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-");
+//     printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-");
+//     printf( (fileStat.st_mode & S_IXUSR) ? "x" : "-");
+//     printf( (fileStat.st_mode & S_IRGRP) ? "r" : "-");
+//     printf( (fileStat.st_mode & S_IWGRP) ? "w" : "-");
+//     printf( (fileStat.st_mode & S_IXGRP) ? "x" : "-");
+//     printf( (fileStat.st_mode & S_IROTH) ? "r" : "-");
+//     printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-");
+//     printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-");
 // ◦ int lstat(const char *restrict path, struct stat *restrict buf)
 // Comme stat mais avec un lien symbolic,
 // The lstat() function is like stat() except in the case where the named file is a symbolic link; lstat() returns information about the link, while stat() returns information about the file the link

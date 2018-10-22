@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2018/10/21 20:25:23 by abezanni         ###   ########.fr       */
+/*   Updated: 2018/10/22 02:26:54 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 
 
 # include <sys/ioctl.h>//bonus affichage
+# define EXEC_MASK 73
 
 typedef struct dirent	t_dirent;
 typedef struct s_data_file	t_data_file;
@@ -35,6 +36,7 @@ struct s_data_file
 {
 	char			*name;
 	int				type;
+	t_bool			exec;
 	t_data_file		*next;
 };
 
@@ -49,7 +51,7 @@ struct	s_data_folder
 
 void	del_t_data_file(t_data_file **current);
 void	del_t_data_files(t_data_file **current);
-void	new_t_data_file(t_data_file **current, char *name, int type);
+void	new_t_data_file(t_data_file **current, char *name, int type, t_bool exec);
 
 void	del_t_data_folder(t_data_folder **current);
 void	del_t_data_folders(t_data_folder **current);
