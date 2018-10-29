@@ -1,42 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   data_file.c                                        :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/21 18:32:08 by abezanni          #+#    #+#             */
-/*   Updated: 2018/10/22 01:40:34 by abezanni         ###   ########.fr       */
+/*   Created: 2018/10/29 17:27:59 by abezanni          #+#    #+#             */
+/*   Updated: 2018/10/29 17:59:50 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	del_t_data_file(t_data_file **current)
+void	del_t_error(t_error **current)
 {
-	t_data_file *to_free;
+	t_error *to_free;
 
 	to_free = *current;
-	free((*current)->name);
 	*current = (*current)->next;
+	ft_printf(UNEXIST_FILE, to_free->name);
 	free(to_free);
 }
 
-void	del_t_data_files(t_data_file **current)
+void	del_t_errors(t_error **current)
 {
 	while (*current)
-		del_t_data_file(current);
+		del_t_error(current);
 }
 
-void	new_t_data_file(t_data_file **current, char *name, int type, t_bool exec)
+void	new_t_error(t_error **current, char *name)
 {
-	t_data_file *next;
+	t_error *next;
 
+	while (*current && ft_strcmp((*current)->name, name) < 0)
+		current = &((*current)->next);
 	next = *current;
-	if (!(*current = ft_memalloc(sizeof(t_data_file))))
+	if (!(*current = ft_memalloc(sizeof(t_error))))
 		return ;
-	(*current)->name = ft_strdup(name);
-	(*current)->type = type;
-	(*current)->exec = exec;
+	(*current)->name = name;
 	(*current)->next = next;
 }

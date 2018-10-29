@@ -1,34 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   data_folder.c                                      :+:      :+:    :+:   */
+/*   options.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/21 18:36:17 by abezanni          #+#    #+#             */
-/*   Updated: 2018/10/21 18:54:13 by abezanni         ###   ########.fr       */
+/*   Created: 2018/10/29 16:40:12 by abezanni          #+#    #+#             */
+/*   Updated: 2018/10/29 17:16:09 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	del_t_data_folder(t_data_folder **current)
+int			options(char *str, int options)
 {
-	t_data_folder *to_free;
+	char *pos;
 
-	to_free = *current;
-	*current = (*current)->next;
-	free(to_free);
-}
-
-void	del_t_data_folders(t_data_folder **current)
-{
-	while (*current)
-		del_t_data_folder(current);
-}
-
-void	new_t_data_folder(t_data_folder **current)
-{
-	if (!(*current = ft_memalloc(sizeof(t_data_folder))))
-		return ;
+	while (*str)
+	{
+		if ((pos = ft_strchr(OPTIONS, *str)))
+		{
+			if (options | 1 << (pos - OPTIONS))
+				options += 1 << (pos - OPTIONS);
+		}
+		else
+		{
+			ft_printf(USAGE, *str, OPTIONS);
+			exit(0);
+		}
+		str++;
+	}
+	return (options);
 }

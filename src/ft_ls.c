@@ -6,33 +6,16 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2018/10/22 02:37:15 by abezanni         ###   ########.fr       */
+/*   Updated: 2018/10/29 19:49:15 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	get_infos(t_data_folder *folder, t_data_file **file, t_dirent *dirent, t_bool exec)
+void	reordone(t_file **bgn, int repeat)
 {
-	if (folder->len_max < dirent->d_namlen)
-		folder->len_max = dirent->d_namlen;
-	folder->nb_files++;
-	while (*file)
-	{
-		if (ft_strcmp(dirent->d_name, (*file)->name) < 0)
-		{
-			new_t_data_file(file, dirent->d_name, dirent->d_type, exec);
-			return ;
-		}
-		file = &((*file)->next);
-	}
-	new_t_data_file(file, dirent->d_name, dirent->d_type, exec);
-}
-
-void	reordone(t_data_file **bgn, int repeat)
-{
-	t_data_file **move;
-	t_data_file *tmp;
+	t_file **move;
+	t_file *tmp;
 	int i;
 
 	move = &((*bgn)->next);
@@ -63,9 +46,9 @@ void	reordone(t_data_file **bgn, int repeat)
 	}
 }
 
-void	one_on_x(t_data_folder *folder, size_t len_col)
+void	one_on_x(t_folder *folder, size_t len_col)
 {
-	t_data_file	*file;
+	t_file	*file;
 	size_t	word;
 	size_t	i;
 	size_t	j;
@@ -95,10 +78,10 @@ void	one_on_x(t_data_folder *folder, size_t len_col)
 		ft_printf("\n");
 }
 
-void	aff(t_data_folder *folder)
+void	aff(t_folder *folder)
 {
     struct winsize w;
-	t_data_file *current;
+	t_file *current;
 
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 	if (w.ws_col < folder->nb_files * (folder->len_max + 1))
@@ -108,7 +91,7 @@ void	aff(t_data_folder *folder)
 		current = folder->files;
 		while (current)
 		{
-			if (current->type == 4)
+			if (current->type)
 				ft_printf("\033[1;36m%-*s \033[0m", folder->len_max, current->name, current->type);
 			else if (current->exec)
 				ft_printf("\033[0;31m%-*s \033[0m", folder->len_max, current->name, current->type);
@@ -120,33 +103,85 @@ void	aff(t_data_folder *folder)
 	}
 }
 
-int		main(int ac, char **av)
+t_bool	is_exec(char *link, char *name, t_bool *folder, t_bool *exec)
 {
-	(void)ac;
-	DIR *testdir;
-	t_dirent *testdirent;
-	t_data_folder *data;
+	t_bool	back;
+	int		i;
+	char	*join;
+	t_stat	buf;
 
-	struct stat buf;
+	back = TRUE;
+	join = NULL;
+	if (link)
+	{
+		i = ft_strlen(link) - 1;
+		if (link[i] != '/')
+			join = ft_strjoin(link, "/");
+		join = ft_strmjoin(join, name, 1);
+	}
+	if (stat(join ? join : name, &buf) != -1)
+	{
+		*exec = (buf.st_mode & 73) != 0;
+		*folder = (buf.st_mode & S_IFDIR) != 0;
+	}
+	else
+		back = FALSE;
+	free(join);
+	return (back);
+}
+
+void	recursive(t_data *data, char *link)
+{
+	t_folder	*folder;
+	t_bool		dir;
 	t_bool		exec;
 
-
-	testdir = opendir(av[1]);
-	new_t_data_folder(&data);
-	while ((testdirent = readdir(testdir)))
+	(void)data;
+	new_t_folder(&folder, link);
+	folder->dir = opendir(link);
+	while ((folder->file = readdir(folder->dir)))
 	{
-		if (*testdirent->d_name != '.')
+		if (*folder->file->d_name != '.')
 		{
-			if (stat(ft_strjoin(ft_strjoin(av[1], "/"), testdirent->d_name), &buf) != -1)
-				exec = buf.st_mode & 73;
-			else
-				exec = FALSE;
-			get_infos(data, &data->files, testdirent, exec);
+			is_exec(link, folder->file->d_name, &dir, &exec);
+			handle_folder(folder, folder->file->d_namlen);
+			sort_files(&folder->files, folder->file->d_name, folder->file->d_type == 4, exec);
 		}
 	}
-	aff(data);
-	// ft_printf("%s ", testdirent->d_name);
-	closedir(testdir);
+	aff(folder);
+	closedir(folder->dir);
+}
+
+void	init(t_data *data, int *i)
+{
+	ft_bzero(data, sizeof(t_data));
+	*i = 1;
+}
+
+int		main(int ac, char **av)
+{
+	t_data	data;
+	int		i;
+
+	init(&data, &i);
+	if (*av[i] == '-')
+	{
+		data.options = options(av[i] + 1, 0);
+		i++;
+	}
+	if (i == ac)
+		recursive(&data, ".");
+	open_dirs(&data, ac - i, av + i);
+	del_t_errors(&(data.errors));
+	while (i < ac)
+	{
+		if (ac > 2)
+			ft_printf("%s:\n", av[i]);
+		recursive(&data, av[i]);
+		i++;
+		if (i < ac)
+			write(1, "\n", 1);
+	}
 	return (0);
 }
 

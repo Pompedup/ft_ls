@@ -6,7 +6,7 @@
 #    By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/03 18:57:57 by abezanni          #+#    #+#              #
-#    Updated: 2018/10/21 18:37:43 by abezanni         ###   ########.fr        #
+#    Updated: 2018/10/29 17:42:55 by abezanni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,12 +22,20 @@ OBJ =			$(SRC:.c=.o)
 
 INCLUDE =		-I ./inc
 
-STRUCT =		data_file.c\
-				data_folder.c\
+STRUCT =		file.c\
+				folder.c\
+				error.c\
+
+HANDLE =		file.c\
+				open_dirs.c\
+				options.c\
 
 SRC =			$(addprefix src/,ft_ls.c)\
-				$(addprefix src/struct/, $(STRUCT))
+				$(addprefix src/struct/, $(STRUCT))\
+				$(addprefix src/handle/, $(HANDLE))\
 				#$(addprefix get_data/,$(ASM_GET_DATA))\
+
+#$(patsubst %.c,%.o,x.c.c bar.c)
 
 NAME =			ft_ls
 
