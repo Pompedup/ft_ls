@@ -6,7 +6,7 @@
 #    By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/03 18:57:57 by abezanni          #+#    #+#              #
-#    Updated: 2018/10/29 17:42:55 by abezanni         ###   ########.fr        #
+#    Updated: 2018/11/04 13:59:11 by abezanni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,13 +26,25 @@ STRUCT =		file.c\
 				folder.c\
 				error.c\
 
+DISPLAY =		adjust.c\
+				display.c\
+				right_size.c\
+
 HANDLE =		file.c\
+				folder.c\
 				open_dirs.c\
 				options.c\
 
-SRC =			$(addprefix src/,ft_ls.c)\
-				$(addprefix src/struct/, $(STRUCT))\
-				$(addprefix src/handle/, $(HANDLE))\
+OPTIONS =		reverse.c\
+
+RACINE =		ft_ls.c\
+				step.c\
+				$(addprefix display/, $(DISPLAY))\
+				$(addprefix handle/, $(HANDLE))\
+				$(addprefix options/, $(OPTIONS))\
+				$(addprefix struct/, $(STRUCT))\
+
+SRC =			$(addprefix src/,$(RACINE))\
 				#$(addprefix get_data/,$(ASM_GET_DATA))\
 
 #$(patsubst %.c,%.o,x.c.c bar.c)

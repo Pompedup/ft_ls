@@ -6,102 +6,11 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2018/10/29 19:49:15 by abezanni         ###   ########.fr       */
+/*   Updated: 2018/11/04 17:51:22 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
-
-void	reordone(t_file **bgn, int repeat)
-{
-	t_file **move;
-	t_file *tmp;
-	int i;
-
-	move = &((*bgn)->next);
-	bgn = move;
-	while (*move && *bgn && repeat)
-	{
-		i = 0;
-		while (*move && i < repeat)
-		{
-			i++;
-			move = &((*move)->next);
-		}
-		if (*move)
-		{
-			tmp = *move;
-			*move = (*move)->next;
-			tmp->next = *bgn;
-			*bgn = tmp;
-			bgn = &(tmp->next);
-		}
-		if (!*move)
-		{
-			bgn = &((*bgn)->next);
-			if (bgn)
-				move = bgn;
-			repeat--;
-		}
-	}
-}
-
-void	one_on_x(t_folder *folder, size_t len_col)
-{
-	t_file	*file;
-	size_t	word;
-	size_t	i;
-	size_t	j;
-
-	i = 0;
-	while ((i + 1) * (folder->len_max + 1) <= len_col)
-		i++;
-	word = folder->nb_files / i + (folder->nb_files % i > 0);
-	i = folder->nb_files / word + (folder->nb_files % word > 0);
-	reordone(&folder->files, word - 1);
-	j = 0;
-	file = folder->files;
-	while (file)
-	{
-		if (file->type == 4)
-			ft_printf("\033[1;36m%-*s \033[0m", folder->len_max, file->name, file->type);
-		else if (file->exec)
-			ft_printf("\033[0;31m%-*s \033[0m", folder->len_max, file->name, file->type);
-		else
-			ft_printf("%-*s ", folder->len_max, file->name, file->type);
-		file = file->next;
-		j++;
-		if (j % i == 0)
-			ft_printf("\n");
-	}
-	if (j % i != 0)
-		ft_printf("\n");
-}
-
-void	aff(t_folder *folder)
-{
-    struct winsize w;
-	t_file *current;
-
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-	if (w.ws_col < folder->nb_files * (folder->len_max + 1))
-		one_on_x(folder, w.ws_col);
-	else
-	{
-		current = folder->files;
-		while (current)
-		{
-			if (current->type)
-				ft_printf("\033[1;36m%-*s \033[0m", folder->len_max, current->name, current->type);
-			else if (current->exec)
-				ft_printf("\033[0;31m%-*s \033[0m", folder->len_max, current->name, current->type);
-			else
-				ft_printf("%-*s ", folder->len_max, current->name, current->type);
-			current = current->next;
-		}
-		ft_printf("\n");
-	}
-}
 
 t_bool	is_exec(char *link, char *name, t_bool *folder, t_bool *exec)
 {
@@ -121,6 +30,7 @@ t_bool	is_exec(char *link, char *name, t_bool *folder, t_bool *exec)
 	}
 	if (stat(join ? join : name, &buf) != -1)
 	{
+		ft_printf("%lu\n", buf.st_mtimespec.tv_sec);
 		*exec = (buf.st_mode & 73) != 0;
 		*folder = (buf.st_mode & S_IFDIR) != 0;
 	}
@@ -130,32 +40,56 @@ t_bool	is_exec(char *link, char *name, t_bool *folder, t_bool *exec)
 	return (back);
 }
 
+t_bool	get_stats(char *link, char *name, t_stat *buf)
+{
+	t_bool	back;
+	int		i;
+	char	*join;
+
+	back = TRUE;
+	join = NULL;
+	if (link)
+	{
+		i = ft_strlen(link) - 1;
+		if (link[i] != '/')
+			join = ft_strjoin(link, "/");
+		join = ft_strmjoin(join, name, 1);
+	}
+	if (stat(join ? join : name, buf) == -1)
+		back = FALSE;
+	free(join);
+	return (back);
+}
+
 void	recursive(t_data *data, char *link)
 {
 	t_folder	*folder;
-	t_bool		dir;
-	t_bool		exec;
+	t_file		*new;
+	t_stat		buf;
 
 	(void)data;
-	new_t_folder(&folder, link);
-	folder->dir = opendir(link);
+	new_t_folder(&folder, link, NULL);
+	folder->dir = opendir(folder->name);
 	while ((folder->file = readdir(folder->dir)))
 	{
 		if (*folder->file->d_name != '.')
 		{
-			is_exec(link, folder->file->d_name, &dir, &exec);
-			handle_folder(folder, folder->file->d_namlen);
-			sort_files(&folder->files, folder->file->d_name, folder->file->d_type == 4, exec);
+			get_stats(folder->name, folder->file->d_name, &buf);
+			handle_folder_len(folder, folder->file->d_namlen);
+			new_t_file(&new, folder->file->d_name);
+			new->type = (buf.st_mode & S_IFDIR) != 0;
+			new->exec = (buf.st_mode & 73) != 0;
+			if (data->options & OPTION_T)
+			{
+				new->time = buf.st_mtimespec.tv_sec;
+				sort_files_by_time(&folder->files, new);
+			}
+			else
+				sort_files_by_name(&folder->files, new);
 		}
 	}
-	aff(folder);
+//	aff(folder);
 	closedir(folder->dir);
-}
-
-void	init(t_data *data, int *i)
-{
-	ft_bzero(data, sizeof(t_data));
-	*i = 1;
 }
 
 int		main(int ac, char **av)
@@ -173,15 +107,21 @@ int		main(int ac, char **av)
 		recursive(&data, ".");
 	open_dirs(&data, ac - i, av + i);
 	del_t_errors(&(data.errors));
-	while (i < ac)
-	{
-		if (ac > 2)
-			ft_printf("%s:\n", av[i]);
-		recursive(&data, av[i]);
-		i++;
-		if (i < ac)
-			write(1, "\n", 1);
-	}
+	handle_folders(&data, data.folders);
+	// while (i < ac)
+	// {
+	// 	if (ac > 2)
+	// 		ft_printf("%s:\n", av[i]);
+	// 	recursive(&data, av[i]);
+	// 	i++;
+	// 	if (i < ac)
+	// 		write(1, "\n", 1);
+	// }
+	if (data.options & OPTION_R)
+		reverse(&data.folders, data.folders);
+	display(data.folders, ac > 3);
+	del_t_folders(&data.files);
+	del_t_folders(&data.folders);
 	return (0);
 }
 
@@ -274,5 +214,25 @@ int		main(int ac, char **av)
 // ◦ free
 // ◦ exit
 
+
+// struct stat
+        //  dev_t           st_dev;           /* ID of device containing file */
+        //  mode_t          st_mode;          /* Mode of file (see below) */
+        //  nlink_t         st_nlink;         /* Number of hard links */
+        //  ino_t           st_ino;           /* File serial number */
+        //  uid_t           st_uid;           /* User ID of the file */
+        //  gid_t           st_gid;           /* Group ID of the file */
+        //  dev_t           st_rdev;          /* Device ID */
+        //  struct timespec st_atimespec;     /* time of last access */
+        //  struct timespec st_mtimespec;     /* time of last data modification */
+        //  struct timespec st_ctimespec;     /* time of last status change */
+        //  struct timespec st_birthtimespec; /* time of file creation(birth) */
+        //  off_t           st_size;          /* file size, in bytes */
+        //  blkcnt_t        st_blocks;        /* blocks allocated for file */
+        //  blksize_t       st_blksize;       /* optimal blocksize for I/O */
+        //  uint32_t        st_flags;         /* user defined flags for file */
+        //  uint32_t        st_gen;           /* file generation number */
+        //  int32_t         st_lspare;        /* RESERVED: DO NOT USE! */
+        //  int64_t         st_qspare[2];     /* RESERVED: DO NOT USE! */
 
 //ls -lRart (-l droits ?)
