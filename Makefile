@@ -6,7 +6,7 @@
 #    By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/03 18:57:57 by abezanni          #+#    #+#              #
-#    Updated: 2018/11/04 13:59:11 by abezanni         ###   ########.fr        #
+#    Updated: 2019/02/25 16:48:07 by abezanni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,8 @@ OBJ =			$(SRC:.c=.o)
 
 INCLUDE =		-I ./inc
 
-STRUCT =		file.c\
+STRUCT =		container.c\
+				file.c\
 				folder.c\
 				error.c\
 
@@ -30,10 +31,12 @@ DISPLAY =		adjust.c\
 				display.c\
 				right_size.c\
 
-HANDLE =		file.c\
+HANDLE =		args.c\
+				file.c\
 				folder.c\
 				open_dirs.c\
 				options.c\
+				sort.c\
 
 OPTIONS =		reverse.c\
 

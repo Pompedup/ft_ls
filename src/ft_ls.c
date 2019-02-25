@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2018/11/04 17:51:22 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/02/25 16:52:18 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	recursive(t_data *data, char *link)
 	closedir(folder->dir);
 }
 
-int		main(int ac, char **av)
+int		maine(int ac, char **av)
 {
 	t_data	data;
 	int		i;
@@ -100,7 +100,7 @@ int		main(int ac, char **av)
 	init(&data, &i);
 	if (*av[i] == '-')
 	{
-		data.options = options(av[i] + 1, 0);
+		data.options = options(av[i] + 1);
 		i++;
 	}
 	if (i == ac)
@@ -122,6 +122,38 @@ int		main(int ac, char **av)
 	display(data.folders, ac > 3);
 	del_t_folders(&data.files);
 	del_t_folders(&data.folders);
+	return (0);
+}
+
+void	simple_print(t_container *contain)
+{
+	while (contain)
+	{
+		ft_printf("%s\n", contain->name);
+		contain = contain->next;
+	}
+}
+
+int		main(int ac, char **av)
+{
+	t_data	data;
+	int		i;
+
+	init(&data, &i);
+	if (i < ac && *av[i] == '-')
+	{
+		if ((data.options = options(av[i] + 1)) == -1)
+			return (0);
+		i++;
+	}
+	if (i < ac)
+		args(&data, ac - i, av + i);
+	else
+	{
+		// handle_folder(&data, ".");
+		ft_printf("pas arg\n");// arg = '.'
+	}
+	simple_print(data.container);
 	return (0);
 }
 

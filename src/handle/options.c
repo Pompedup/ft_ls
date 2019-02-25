@@ -6,16 +6,18 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/29 16:40:12 by abezanni          #+#    #+#             */
-/*   Updated: 2018/10/29 17:16:09 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/02/25 14:16:18 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int			options(char *str, int options)
+int			options(char *str)
 {
+	int options;
 	char *pos;
 
+	options = 0;
 	while (*str)
 	{
 		if ((pos = ft_strchr(OPTIONS, *str)))
@@ -26,7 +28,7 @@ int			options(char *str, int options)
 		else
 		{
 			ft_printf(USAGE, *str, OPTIONS);
-			exit(0);
+			return (-1);
 		}
 		str++;
 	}

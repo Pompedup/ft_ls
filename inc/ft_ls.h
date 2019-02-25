@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2018/11/04 18:17:34 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/02/25 16:47:47 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,10 @@
 # include <pwd.h>
 # include <uuid/uuid.h>
 
-
 # include <sys/ioctl.h>//bonus affichage
 # define EXEC_MASK 73
 
-
-# define OPTIONS "Ralrt"
+# define OPTIONS		"Ralrt"
 # define OPTION_BIGR	1 << 0
 # define OPTION_A		1 << 1
 # define OPTION_L		1 << 2
@@ -44,19 +42,20 @@
 
 # define UNEXIST_FILE	"./ft_ls %s: No sush file or directory\n"
 
-typedef struct dirent	t_dirent;
-typedef struct stat		t_stat;
-typedef struct s_file	t_file;
-typedef struct s_folder	t_folder;
-typedef struct s_error	t_error;
+typedef struct dirent		t_dirent;
+typedef struct stat			t_stat;
+typedef struct s_file		t_file;
+typedef struct s_folder		t_folder;
+typedef struct s_container	t_container;
+typedef struct s_error		t_error;
 
-struct s_error
+struct	s_error
 {
 	char			*name;
 	t_error			*next;
 };
 
-struct s_file
+struct	s_file
 {
 	char			*name;
 	t_bool			type;
@@ -68,7 +67,7 @@ struct s_file
 
 struct	s_folder
 {
-	DIR				*dir;
+	DIR				*dir;//a delete
 	t_dirent		*file;
 	t_file			*files;
 	t_folder		*subfolders;
@@ -77,13 +76,25 @@ struct	s_folder
 	size_t			nb_files;
 	time_t			time;
 	off_t			size;
-	t_folder	*next;
+	t_folder		*next;
+};
+
+struct	s_container
+{
+	DIR				*dir;
+	// t_bool			is_dir;
+	char			*name;//to sort
+	time_t			time;//to sort
+	t_folder		*folder;
+	t_file			*file;
+	t_container		*next;
 };
 
 typedef struct	s_data
 {
-	t_folder		*folders;
-	t_folder		*files;
+	t_container		*container;
+	t_folder		*folders;//
+	t_folder		*files;//
 	t_error			*errors;
 	int				options;
 }				t_data;
@@ -114,7 +125,7 @@ void	sort_folders_by_name(t_folder **folders, t_folder *new);
 void	open_dirs(t_data *data, int ac, char **av);
 
 //handle options
-int		options(char *str, int options);
+int		options(char *str);
 
 //handle file
 void	sort_files_by_name(t_file **file, t_file *new);
@@ -143,4 +154,15 @@ void	new_t_file(t_file **current, char *name);
 void	del_t_folder(t_folder **current);
 void	del_t_folders(t_folder **current);
 void	new_t_folder(t_folder **current, char *name, DIR *dir);
+
+void	del_t_container(t_container **current);
+void	del_t_containers(t_container **current);
+void	new_t_container(t_container **current, char *name, DIR *dir);
+
+
+t_container	**same_time(t_data *data, t_container **lst, t_container *new);
+void		container_by_time(t_data *data, t_container **lst, t_container *new);
+void		container_by_name(t_data *data, t_container **lst, t_container *new);
+
+void	args(t_data *data, int ac, char **av);
 #endif
