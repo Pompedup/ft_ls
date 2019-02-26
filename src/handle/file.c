@@ -6,25 +6,25 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/29 16:36:38 by abezanni          #+#    #+#             */
-/*   Updated: 2018/11/04 18:43:12 by abezanni         ###   ########.fr       */
+/*   Updated: 2018/11/04 21:15:59 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-// void	sort_files_by_time(t_file **file, char *name, int)
-// {
-// 	while (*file)
-// 	{
-// 		if ((*file)->time > time)
-// 		{
-// 			new_t_file(file, name);
-// 			return ;
-// 		}
-// 		file = &((*file)->next);
-// 	}
-// 	new_t_file(file, name);
-// }
+/*
+********************************************************************************
+**	Function: sort_files_by_name
+**	----------------
+**		Place a file in the list at the right place by alphabetic order
+**
+**		file: the list of files
+**		new: the new file
+**	****
+**
+**   returns: nothing
+********************************************************************************
+*/
 
 void	sort_files_by_name(t_file **file, t_file *new)
 {
@@ -41,6 +41,20 @@ void	sort_files_by_name(t_file **file, t_file *new)
 	new->next = *file;
 	*file = new;
 }
+
+/*
+********************************************************************************
+**	Function: sort_files_by_time
+**	----------------
+**		Place a file in the list at the right place by last time of modification
+**
+**		file: the list of files
+**		new: the new file
+**	****
+**
+**   returns: nothing
+********************************************************************************
+*/
 
 void	sort_files_by_time(t_file **files, t_file *new)
 {
@@ -66,6 +80,20 @@ void	sort_files_by_time(t_file **files, t_file *new)
 	new->next = *files;
 	*files = new;
 }
+
+/*
+********************************************************************************
+**	Function: handle_folder_len
+**	----------------
+**		Verify if the len is greater than the one register before and modify
+**			it if it's necessary
+**
+**		folder: the folder we actualy use
+**		len: the len to compare
+**
+**   returns: nothing
+********************************************************************************
+*/
 
 void	handle_folder_len(t_folder *folder, size_t len)
 {
