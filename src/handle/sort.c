@@ -6,21 +6,20 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/25 16:24:01 by abezanni          #+#    #+#             */
-/*   Updated: 2019/02/25 17:01:41 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/02/26 16:50:53 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-t_container	**same_time(t_data *data, t_container **lst, t_container *new)
+static t_container	**same_time(t_data *data, t_container **lst, t_container *new)
 {
 	int cmp;
 
 	while (*lst && (*lst)->time == new->time)
 	{
 		cmp = ft_strcmp(new->name, (*lst)->name);
-		if ((cmp < 0 && data->options ^ OPTION_R)
-			|| (cmp > 0 && data->options & OPTION_R))
+		if (data->options & OPTION_R ? cmp < 0 : cmp > 0)
 			break ;
 		lst = &((*lst)->next);
 	}

@@ -6,41 +6,19 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/25 14:58:06 by abezanni          #+#    #+#             */
-/*   Updated: 2019/02/26 02:36:48 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/02/26 19:54:06 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-t_bool	open_file(t_data *data, char *name)
-{
-	t_file	*new;
-	t_stat	buf;
-
-	if (!(get_stats(NULL, name, &buf)))
-		return (FALSE);
-	if (!data->files)
-		new_t_folder(&data->files, NULL, NULL);
-	new_t_file(&new, name);
-	new->type = (buf.st_mode & S_IFDIR) != 0;
-	new->exec = (buf.st_mode & 73) != 0;
-	if (data->options & OPTION_T)
-	{
-		new->time = buf.st_mtimespec.tv_sec;
-		new->size = buf.st_size;
-		sort_files_by_time(&data->files->files, new);
-	}
-	else
-		sort_files_by_name(&data->files->files, new);
-	return (TRUE);
-}
-
 time_t	get_time(char *link)
 {
 	t_stat	buf;
 
-	stat(link, &buf);
-	return (buf.st_mtimespec.tv_sec);
+	if (!stat(link, &buf))
+		return (buf.st_mtimespec.tv_sec);
+	return (0);
 }
 
 t_bool	is_dir(t_data *data, char *link)
@@ -54,51 +32,33 @@ t_bool	is_dir(t_data *data, char *link)
 	if (data->options & OPTION_T)
 	{
 		new->time = get_time(link);
-		container_by_time(data, &data->container, new);
+		container_by_time(data, &data->container_dir, new);
 	}
 	else
-		container_by_name(data, &data->container, new);
+		container_by_name(data, &data->container_dir, new);
 	return (TRUE);
 }
 
 t_bool	is_file(t_data *data, char *link)
 {
+	size_t		len;
 	time_t		time;
 	t_container	*new;
 
 	if (!(time = get_time(link)))
 		return (FALSE);
 	new_t_container(&new, ft_strdup(link), NULL);
+	if ((len = ft_strlen(link)) > data->max_lenght)
+		data->max_lenght = len + 1;
+	data->nb_files++;
 	if (data->options & OPTION_T)
 	{
 		new->time = time;
-	ft_printf("%zu\n", new->time);
-		container_by_time(data, &data->container, new);
+		container_by_time(data, &data->container_files, new);
 	}
 	else
-		container_by_name(data, &data->container, new);
-
-
+		container_by_name(data, &data->container_files, new);
 	return (TRUE);
-	// t_file	*new;
-	// t_stat	buf;
-
-	// if (!(get_stats(NULL, link, &buf)))
-	// 	return (FALSE);
-	// if (!data->files)
-	// 	new_t_folder(&data->files, NULL, NULL);
-	// new_t_file(&new, link);
-	// new->type = (buf.st_mode & S_IFDIR) != 0;
-	// new->exec = (buf.st_mode & 73) != 0;
-	// if (data->options & OPTION_T)
-	// {
-	// 	new->time = buf.st_mtimespec.tv_sec;
-	// 	new->size = buf.st_size;
-	// 	sort_files_by_time(&data->files->files, new);
-	// }
-	// else
-	// 	sort_files_by_name(&data->files->files, new);
-	// return (TRUE);
 }
 
 void	test_link(t_data *data, char *link)
@@ -114,8 +74,5 @@ void	args(t_data *data, int ac, char **av)
 
 	i = 0;
 	while (i < ac)
-	{
 		test_link(data, av[i++]);
-		// test fichier dossier rien
-	}
 }

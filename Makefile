@@ -6,7 +6,7 @@
 #    By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/03 18:57:57 by abezanni          #+#    #+#              #
-#    Updated: 2019/02/25 16:48:07 by abezanni         ###   ########.fr        #
+#    Updated: 2019/02/26 17:25:38 by abezanni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,7 @@ STRUCT =		container.c\
 
 DISPLAY =		adjust.c\
 				display.c\
+				files.c\
 				right_size.c\
 
 HANDLE =		args.c\
@@ -66,6 +67,12 @@ $(OBJ) : inc/ft_ls.h
 
 libftcomp :
 	@make -C $(LIB_PATH)
+
+file_test :
+	rm -rf directory
+	touch file1
+	mkdir directory
+	touch file2
 
 clean :
 	@make clean -C $(LIB_PATH)

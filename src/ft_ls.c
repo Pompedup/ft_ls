@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2019/02/25 16:52:18 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/02/26 19:47:35 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,9 +127,13 @@ int		maine(int ac, char **av)
 
 void	simple_print(t_container *contain)
 {
+	char *test;
+
 	while (contain)
 	{
-		ft_printf("%s\n", contain->name);
+		test = ctime(&contain->time);
+		*(ft_strchr(test, '\n')) = '\0';
+		ft_printf("\033[32m%s - %s - %p\n", test, contain->name, contain->dir);
 		contain = contain->next;
 	}
 }
@@ -149,11 +153,16 @@ int		main(int ac, char **av)
 	if (i < ac)
 		args(&data, ac - i, av + i);
 	else
-	{
+		test_link(&data, ".");
 		// handle_folder(&data, ".");
-		ft_printf("pas arg\n");// arg = '.'
-	}
-	simple_print(data.container);
+		// ft_printf("pas arg\n");// arg = '.'
+	// ft_printf("%p\n", data.container_dir);
+	del_t_errors(&(data.errors));
+	display_files(&data.container_files, data.max_lenght, data.nb_files);
+	// simple_print(data.container_dir);
+	del_t_containers(&data.container_dir);
+	del_t_containers(&data.container_files);
+	// handle_folders(&data);
 	return (0);
 }
 
