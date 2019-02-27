@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/02/26 18:28:47 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/02/27 16:26:26 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ struct	s_file
 
 struct	s_folder
 {
-	DIR				*dir;//a delete
+	DIR				*dir;
 	t_dirent		*file;
 	t_file			*files;
 	t_folder		*subfolders;
@@ -82,11 +82,8 @@ struct	s_folder
 struct	s_container
 {
 	DIR				*dir;
-	// t_bool			is_dir;
-	char			*name;//to sort
-	time_t			time;//to sort
-	// t_folder		*folder;
-	// t_file			*file;
+	char			*name;
+	time_t			time;
 	t_container		*next;
 };
 
