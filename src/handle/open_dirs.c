@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/29 17:24:18 by abezanni          #+#    #+#             */
-/*   Updated: 2018/11/04 18:18:49 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/01 17:57:34 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,8 @@ static t_bool	open_file(t_data *data, char *name)
 		new_t_folder(&data->files, NULL, NULL);
 	new_t_file(&new, name);
 	new->type = (buf.st_mode & S_IFDIR) != 0;
-	new->exec = (buf.st_mode & 73) != 0;
 	if (data->options & OPTION_T)
 	{
-		new->time = buf.st_mtimespec.tv_sec;
 		new->size = buf.st_size;
 		sort_files_by_time(&data->files->files, new);
 	}
@@ -53,8 +51,6 @@ void	open_dirs(t_data *data, int ac, char **av)
 			if (data->options & OPTION_T)
 			{
 				get_stats(NULL, new->name, &buf);
-				new->time = buf.st_mtimespec.tv_sec;
-				new->size = buf.st_size;
 				sort_folders_by_time(folder, new);
 			}
 			else

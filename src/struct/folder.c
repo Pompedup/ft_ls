@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 18:36:17 by abezanni          #+#    #+#             */
-/*   Updated: 2018/11/04 17:38:31 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/01 18:43:09 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,11 @@ void	new_t_folder(t_folder **current, char *name, DIR *dir)
 		return ;
 	(*current)->name = name;
 	(*current)->dir = dir;
-	if (!dir)
-	if (!((*current)->dir = opendir(name)))
-	{
-		//error message
-	}
+	(*current)->files = NULL;
+	// if (!dir)
+	// if (!((*current)->dir = opendir(name)))
+	// {
+		// error message
+	// }
 	(*current)->next = next;
 }

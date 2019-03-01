@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/29 16:36:23 by abezanni          #+#    #+#             */
-/*   Updated: 2018/11/04 18:43:21 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/01 17:57:27 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,21 +35,6 @@ void	sort_folders_by_time(t_folder **folders, t_folder *new)
 {
 	while (*folders)
 	{
-		if ((*folders)->time <= new->time)
-		{
-			if ((*folders)->time == new->time)
-			{
-				while (*folders && (*folders)->time == new->time)
-				{
-					if (ft_strcmp(new->name, (*folders)->name) < 0)
-						break ;
-					folders = &((*folders)->next);
-				}
-			}
-			new->next = *folders;
-			*folders = new;
-			return ;
-		}
 		folders = &((*folders)->next);
 	}
 	new->next = *folders;
@@ -74,50 +59,6 @@ void	sort_folders_by_name(t_folder **folders, t_folder *new)
 
 void	handle_folder(t_data *data, t_folder *folder)
 {
-	t_file		*new_file;
-	t_folder	*new_folder;
-	size_t		n;
-	t_stat		buf;
-
-	n = 0;
-	while ((folder->file = readdir(folder->dir)))
-	{
-		if (*folder->file->d_name != '.' || data->options & OPTION_A)
-		{
-			if (folder->file->d_type == 4 && data->options & OPTION_BIGR)
-			{
-				if (ft_strcmp(".", folder->file->d_name) && ft_strcmp("..", folder->file->d_name))
-				{
-					new_t_folder(&new_folder, create_name(folder->name, folder->file->d_name), NULL);
-					if (data->options & OPTION_T)
-					{
-						get_stats(NULL, new_folder->name, &buf);
-						new_folder->time = buf.st_mtimespec.tv_sec;
-						new_folder->size = buf.st_size;
-						sort_folders_by_time(&folder->subfolders, new_folder);
-					}
-					else
-						sort_folders_by_name(&folder->subfolders, new_folder);
-					n++;
-				}
-			}
-			get_stats(folder->name, folder->file->d_name, &buf);
-			if (folder->len_max < folder->file->d_namlen)
-				folder->len_max = folder->file->d_namlen;
-			folder->nb_files++;
-			new_t_file(&new_file, folder->file->d_name);
-			new_file->type = (buf.st_mode & S_IFDIR) != 0;
-			new_file->exec = (buf.st_mode & 73) != 0;
-			if (data->options & OPTION_T)
-			{
-				new_file->time = buf.st_mtimespec.tv_sec;
-				new_file->size = buf.st_size;
-				sort_files_by_time(&folder->files, new_file);
-			}
-			else
-				sort_files_by_name(&folder->files, new_file);
-		}
-	}
 	closedir(folder->dir);
 	handle_folders(data, folder->subfolders);
 }

@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/02/27 16:26:26 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/01 18:35:03 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <sys/types.h>
 # include <pwd.h>
 # include <uuid/uuid.h>
+# include <grp.h>
 
 # include <sys/ioctl.h>//bonus affichage
 # define EXEC_MASK 73
@@ -36,9 +37,14 @@
 # define USAGE_PART1	"./ft_ls: illegal option -- %c\n"
 # define USAGE_PART2	"usage: ./ft_ls [-%s] [file ...]\n"
 # define USAGE 			USAGE_PART1 USAGE_PART2
-# define FOLDER			"\033[1;36m%-*s \033[0m"
-# define EXEC			"\033[0;31m%-*s \033[0m"
-# define END			""
+# define DIR_COLOR		"1;36"
+# define LNK_COLOR		"35"
+# define SOCK_COLOR		"32"
+# define IFO_COLOR		"33"
+# define EXEC_COLOR		"31"
+# define BLK_COLOR		"33;40"
+# define CHR_COLOR		"34;43"
+# define END_COLOR		""
 
 # define UNEXIST_FILE	"./ft_ls %s: No sush file or directory\n"
 
@@ -58,24 +64,28 @@ struct	s_error
 struct	s_file
 {
 	char			*name;
-	t_bool			type;
-	t_bool			exec;
-	time_t			time;
-	t_file			*next;
+	char			*time;
+	char			type;
+	char			*rights;
+	nlink_t			nb_links;
+	char			*uid;
+	char			*gid;
 	off_t			size;
+	char			*sym_link;
+	t_file			*next;
 };
 
 struct	s_folder
 {
+	char			*name;
 	DIR				*dir;
-	t_dirent		*file;
 	t_file			*files;
 	t_folder		*subfolders;
 	size_t			len_max;
-	char			*name;
 	size_t			nb_files;
-	time_t			time;
-	off_t			size;
+	size_t			uid_len;
+	size_t			gid_len;
+	size_t			link_len;
 	t_folder		*next;
 };
 
@@ -168,4 +178,9 @@ void	test_link(t_data *data, char *link);
 void	args(t_data *data, int ac, char **av);
 
 void	display_files(t_container **files, size_t max_lenght, size_t nb_files);
+
+t_bool	get_folders(t_data *data, t_container **folders);
+
+void	display_folder(t_data *data, t_folder *folder);
+
 #endif

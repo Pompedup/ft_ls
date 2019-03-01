@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/04 12:56:50 by abezanni          #+#    #+#             */
-/*   Updated: 2018/11/04 16:11:06 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/01 11:46:49 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void	repeat(t_folder *folder, size_t lines_full, size_t per_line)
 	file = folder->files;
 	while (file)
 	{
-		display_name(file->type, file->exec, folder->len_max, file->name);
+		display_name(file->type, TRUE/*exec*/, folder->len_max, file->name);
 		file = file->next;
 		i++;
 		if (per_line == 1 || i == end_line || !file)

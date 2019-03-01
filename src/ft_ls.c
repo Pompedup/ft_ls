@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2019/02/26 19:47:35 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/01 19:11:01 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,70 +61,6 @@ t_bool	get_stats(char *link, char *name, t_stat *buf)
 	return (back);
 }
 
-void	recursive(t_data *data, char *link)
-{
-	t_folder	*folder;
-	t_file		*new;
-	t_stat		buf;
-
-	(void)data;
-	new_t_folder(&folder, link, NULL);
-	folder->dir = opendir(folder->name);
-	while ((folder->file = readdir(folder->dir)))
-	{
-		if (*folder->file->d_name != '.')
-		{
-			get_stats(folder->name, folder->file->d_name, &buf);
-			handle_folder_len(folder, folder->file->d_namlen);
-			new_t_file(&new, folder->file->d_name);
-			new->type = (buf.st_mode & S_IFDIR) != 0;
-			new->exec = (buf.st_mode & 73) != 0;
-			if (data->options & OPTION_T)
-			{
-				new->time = buf.st_mtimespec.tv_sec;
-				sort_files_by_time(&folder->files, new);
-			}
-			else
-				sort_files_by_name(&folder->files, new);
-		}
-	}
-//	aff(folder);
-	closedir(folder->dir);
-}
-
-int		maine(int ac, char **av)
-{
-	t_data	data;
-	int		i;
-
-	init(&data, &i);
-	if (*av[i] == '-')
-	{
-		data.options = options(av[i] + 1);
-		i++;
-	}
-	if (i == ac)
-		recursive(&data, ".");
-	open_dirs(&data, ac - i, av + i);
-	del_t_errors(&(data.errors));
-	handle_folders(&data, data.folders);
-	// while (i < ac)
-	// {
-	// 	if (ac > 2)
-	// 		ft_printf("%s:\n", av[i]);
-	// 	recursive(&data, av[i]);
-	// 	i++;
-	// 	if (i < ac)
-	// 		write(1, "\n", 1);
-	// }
-	if (data.options & OPTION_R)
-		reverse(&data.folders, data.folders);
-	display(data.folders, ac > 3);
-	del_t_folders(&data.files);
-	del_t_folders(&data.folders);
-	return (0);
-}
-
 void	simple_print(t_container *contain)
 {
 	char *test;
@@ -159,6 +95,7 @@ int		main(int ac, char **av)
 	// ft_printf("%p\n", data.container_dir);
 	del_t_errors(&(data.errors));
 	display_files(&data.container_files, data.max_lenght, data.nb_files);
+	get_folders(&data, &data.container_dir);
 	// simple_print(data.container_dir);
 	del_t_containers(&data.container_dir);
 	del_t_containers(&data.container_files);

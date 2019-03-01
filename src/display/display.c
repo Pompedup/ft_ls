@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/01 16:40:38 by abezanni          #+#    #+#             */
-/*   Updated: 2018/11/04 15:22:38 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/01 18:18:49 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 void	display_name(t_bool folder, t_bool exec, size_t len, char *name)
 {
 	if (folder)
-		ft_printf(FOLDER, len, name);
+		ft_printf(DIR_COLOR, len, name);
 	else if (exec)
-		ft_printf(EXEC, len, name);
+		ft_printf(EXEC_COLOR, len, name);
 	else
 		ft_printf("%-*s ", len, name);
 }

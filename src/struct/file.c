@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 18:32:08 by abezanni          #+#    #+#             */
-/*   Updated: 2018/11/04 16:40:15 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/01 19:09:26 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,8 @@ void	del_t_files(t_file **current)
 
 void	new_t_file(t_file **current, char *name)
 {
-	t_file *next;
-
-	next = *current;
 	if (!(*current = ft_memalloc(sizeof(t_file))))
 		return ;
 	(*current)->name = ft_strdup(name);
-	(*current)->next = next;
+	(*current)->next = NULL;
 }
