@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/01 18:35:03 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 01:52:32 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ struct	s_error
 
 struct	s_file
 {
+	char			*link;
 	char			*name;
 	char			*time;
 	char			type;

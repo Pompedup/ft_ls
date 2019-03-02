@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/01 17:47:53 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/01 18:36:49 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 01:33:11 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,23 @@ void	display_l(t_folder *folder)
 	*buf = '\0';
 	while (file)
 	{
-		ft_printf("%c%s%*hu%*s%*s%*lld%*.*s \033[%sm%s\033[0m\n", file->type,\
-			file->rights, folder->link_len + 2, file->nb_links, folder->uid_len + 1,\
-			file->uid, folder->gid_len + 1, file->gid, 8,\
-			file->size, 13, 12, file->time + 4, get_color(buf, file->type,\
-			file->rights), file->name);
+		ft_printf("%c", file->type);
+		ft_printf("%s", file->rights);
+		ft_printf("%*hu", folder->link_len + 2, file->nb_links);
+		ft_printf("%*s", folder->uid_len + 1, file->uid);
+		ft_printf("%*s", folder->gid_len + 1, file->gid);
+		ft_printf("%*lld", 8, file->size);
+		ft_printf("%*.*s", 13, 12, file->time + 4);
+		ft_printf(" \033[%sm", get_color(buf, file->type, file->rights));
+		ft_printf("%s\033[0m", file->name);
+		if (file->type == 'l')
+			ft_printf(" -> %s", file->sym_link);
+		ft_printf("\n");
+		//ft_printf("%c%s%*hu%*s%*s%*lld%*.*s \033[%sm%s\033[0m\n", file->type,\
+			// file->rights, folder->link_len + 2, file->nb_links, folder->uid_len + 1,\
+			// file->uid, folder->gid_len + 1, file->gid, 8,\
+			// file->size, 13, 12, file->time + 4, get_color(buf, file->type,\
+				// file->rights), file->name);
 		file = file->next;
 	}
 }

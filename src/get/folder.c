@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/27 16:26:47 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/01 19:17:07 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 01:53:27 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,20 +96,20 @@ static char		*get_sym_link(char *link)
 	return (ft_strdup(buf));
 }
 
-static t_bool	get_data(t_data *data, char *link, t_file **files, t_folder *folder)
+static t_bool	get_data(t_data *data, char *link, t_file *new, t_folder *folder)
 {
 	t_stat	buf;
 	size_t	len;
-	t_file	*new;
 
-	ft_printf("%s\n", link);
-	if (stat(link, &buf) == -1)
+	// if (stat(link, &buf) == -1)
+	if (lstat(new->link, &buf) == -1)
 		return (FALSE);
-	new_t_file(&new, link);
+	// new_t_file(&new, link);
 	if (data->options & (OPTION_L | OPTION_T))
 		new->time = ft_strdup(ctime(&buf.st_mtimespec.tv_sec));
 	if (data->options & (OPTION_L))
 	{
+		new->name = ft_strdup(link);
 		new->type = get_type(buf.st_mode);
 		new->rights = get_rights(buf.st_mode);
 		new->nb_links = buf.st_nlink;
@@ -121,15 +121,26 @@ static t_bool	get_data(t_data *data, char *link, t_file **files, t_folder *folde
 		if (new->type == 'l')
 			new->sym_link = get_sym_link(link);
 	}
-	while (*files)
-		files = &((*files)->next);
-	*files = new;
 	return (TRUE);
+}
+
+t_file			*add_file(t_file **files, char *folder, char *name)
+{
+	t_file	*new;
+	char	*link;
+
+	ft_sprintf(&link, "%s/%s", folder, name);
+	new_t_file(&new, link);
+	while (*files)
+		files = &(*files)->next;
+	*files = new;
+	return (new);
 }
 
 static t_bool	handle_folder(t_data *data, t_folder *folder)
 {
-	t_dirent *dirent;
+	t_dirent	*dirent;
+	t_file		*file;
 
 //	if (data->options & OPTION_BIGR)
 		//do recursion
@@ -137,7 +148,9 @@ static t_bool	handle_folder(t_data *data, t_folder *folder)
 	{
 		if (data->options & OPTION_A || *dirent->d_name != '.')
 		{
-			if (!(get_data(data, dirent->d_name, &folder->files, folder)))
+			if (!(file = add_file(&folder->files, folder->name, dirent->d_name)))
+				return (FALSE);
+			if (!(get_data(data, dirent->d_name, file, folder)))
 				return (FALSE);
 			if (dirent->d_namlen > folder->len_max)
 				folder->len_max = dirent->d_namlen;
