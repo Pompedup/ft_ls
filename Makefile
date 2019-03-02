@@ -6,7 +6,7 @@
 #    By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/03 18:57:57 by abezanni          #+#    #+#              #
-#    Updated: 2019/03/02 10:24:03 by abezanni         ###   ########.fr        #
+#    Updated: 2019/03/02 10:43:13 by abezanni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,6 +45,7 @@ HANDLE =		args.c\
 OPTIONS =		reverse.c\
 
 SORT =			files.c\
+				folders.c\
 
 RACINE =		ft_ls.c\
 				step.c\

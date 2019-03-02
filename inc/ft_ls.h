@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 10:25:18 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 10:41:35 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ struct	s_folder
 	DIR				*dir;
 	t_file			*files;
 	t_folder		*subfolders;
+	time_t			time;
 	size_t			len_max;
 	size_t			nb_files;
 	size_t			uid_len;
