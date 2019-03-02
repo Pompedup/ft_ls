@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/25 14:58:06 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/01 19:13:04 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 19:25:11 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,13 @@ time_t	get_time(char *link)
 t_bool	is_dir(t_data *data, char *link)
 {
 	DIR			*dir;
-	t_container	*new;
+	t_folder	*new;
 
 	if (!(dir = opendir(link)))
 		return (FALSE);
-	new_t_container(&new, ft_strdup(link), dir);
-	if (data->options & OPTION_T)
-	{
-		new->time = get_time(link);
-		container_by_time(data, &data->container_dir, new);
-	}
-	else
-		container_by_name(data, &data->container_dir, new);
+	new_t_folder(&new, ft_strdup(link), dir);
+	new->time = get_time(link);
+	sort_folders(data, &data->folders, new);
 	return (TRUE);
 }
 
@@ -43,21 +38,17 @@ t_bool	is_file(t_data *data, char *link)
 {
 	size_t		len;
 	time_t		time;
-	t_container	*new;
+	t_file	*new;
 
 	if (!(time = get_time(link)))
 		return (FALSE);
-	new_t_container(&new, ft_strdup(link), NULL);
+	new_t_file(&new, ft_strdup(link));
 	if ((len = ft_strlen(link)) > data->max_lenght)
 		data->max_lenght = len + 1;
 	data->nb_files++;
 	if (data->options & OPTION_T)
-	{
 		new->time = time;
-		container_by_time(data, &data->container_files, new);
-	}
-	else
-		container_by_name(data, &data->container_files, new);
+	sort_files(data, &data->files->files, new);
 	return (TRUE);
 }
 

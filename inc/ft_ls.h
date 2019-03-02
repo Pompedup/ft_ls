@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 10:41:35 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 19:21:26 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,5 +186,6 @@ t_bool	get_folders(t_data *data, t_container **folders);
 void	display_folder(t_data *data, t_folder *folder);
 
 void		sort_files(t_data *data, t_file **files, t_file *new);
+void		sort_folders(t_data *data, t_folder **folders, t_folder *new);
 
 #endif
