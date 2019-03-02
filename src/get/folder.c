@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/27 16:26:47 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 01:53:27 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 10:24:31 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,8 @@ static char		*get_sym_link(char *link)
 	char	buf[256];
 	int		ret;
 
-	if (!((ret = readlink(link, buf, 255)) > 0))
+	// ft_printf("%s\n");
+	if ((ret = readlink(link, buf, 255)) == -1)
 		return (NULL);
 	buf[ret] = '\0';
 	return (ft_strdup(buf));
@@ -106,7 +107,7 @@ static t_bool	get_data(t_data *data, char *link, t_file *new, t_folder *folder)
 		return (FALSE);
 	// new_t_file(&new, link);
 	if (data->options & (OPTION_L | OPTION_T))
-		new->time = ft_strdup(ctime(&buf.st_mtimespec.tv_sec));
+		new->time = buf.st_mtimespec.tv_sec;
 	if (data->options & (OPTION_L))
 	{
 		new->name = ft_strdup(link);
@@ -119,21 +120,20 @@ static t_bool	get_data(t_data *data, char *link, t_file *new, t_folder *folder)
 		new->gid = get_gid(&buf, folder);
 		new->size = buf.st_size;
 		if (new->type == 'l')
-			new->sym_link = get_sym_link(link);
+			new->sym_link = get_sym_link(new->link);
 	}
 	return (TRUE);
 }
 
-t_file			*add_file(t_file **files, char *folder, char *name)
+t_file			*add_file(char *folder, char *name)
 {
 	t_file	*new;
 	char	*link;
 
 	ft_sprintf(&link, "%s/%s", folder, name);
+	if (!link)
+		return (NULL);
 	new_t_file(&new, link);
-	while (*files)
-		files = &(*files)->next;
-	*files = new;
 	return (new);
 }
 
@@ -148,10 +148,11 @@ static t_bool	handle_folder(t_data *data, t_folder *folder)
 	{
 		if (data->options & OPTION_A || *dirent->d_name != '.')
 		{
-			if (!(file = add_file(&folder->files, folder->name, dirent->d_name)))
+			if (!(file = add_file(folder->name, dirent->d_name)))
 				return (FALSE);
 			if (!(get_data(data, dirent->d_name, file, folder)))
 				return (FALSE);
+			sort_files(data, &folder->files, file);
 			if (dirent->d_namlen > folder->len_max)
 				folder->len_max = dirent->d_namlen;
 		}

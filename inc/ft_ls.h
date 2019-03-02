@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 01:52:32 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 10:25:18 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ struct	s_file
 {
 	char			*link;
 	char			*name;
-	char			*time;
+	time_t			time;
 	char			type;
 	char			*rights;
 	nlink_t			nb_links;
@@ -183,5 +183,7 @@ void	display_files(t_container **files, size_t max_lenght, size_t nb_files);
 t_bool	get_folders(t_data *data, t_container **folders);
 
 void	display_folder(t_data *data, t_folder *folder);
+
+void		sort_files(t_data *data, t_file **files, t_file *new);
 
 #endif

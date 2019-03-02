@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 18:32:08 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 01:53:14 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 10:14:11 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ void	new_t_file(t_file **current, char *link)
 {
 	if (!(*current = ft_memalloc(sizeof(t_file))))
 		return ;
-	(*current)->link = ft_strdup(link);
+	(*current)->link = link;
 	(*current)->next = NULL;
 }
