@@ -6,13 +6,13 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/26 17:24:11 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/01 19:18:16 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 23:31:14 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	adjust_files(t_container **files, size_t nb_files, size_t per_line)
+void	adjust_files(t_file **files, size_t nb_files, size_t per_line)
 {
 	size_t	nb_lines;
 // 	size_t	lines_full;
@@ -30,17 +30,19 @@ void	adjust_files(t_container **files, size_t nb_files, size_t per_line)
 // 	repeat(folder, lines_full, tmp);
 }
 
-void	display_files(t_container **files, size_t max_lenght, size_t nb_files)
+void	display_files(t_folder **files, size_t max_lenght, size_t nb_files)
 {
-    struct winsize w;
+    struct winsize	w;
+	t_file			*file;
 
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+	file = (*files)->files;
 	if (w.ws_col < nb_files * (max_lenght + 1))
-		adjust_files(files, nb_files, w.ws_col / (max_lenght + 1));
-	while (*files)
+		adjust_files(&(*files)->files, nb_files, w.ws_col / (max_lenght + 1));
+	while (file)
 	{
-		ft_printf("%s\n", (*files)->name);
-		files = &(*files)->next;
+		ft_printf("%s\n", file->name);
+		file = file->next;
 	}
 	ft_printf("%zu - %zu\n", max_lenght, nb_files);
 }

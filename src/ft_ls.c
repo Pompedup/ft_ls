@@ -6,60 +6,11 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/01 19:11:01 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/03 00:27:15 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
-
-t_bool	is_exec(char *link, char *name, t_bool *folder, t_bool *exec)
-{
-	t_bool	back;
-	int		i;
-	char	*join;
-	t_stat	buf;
-
-	back = TRUE;
-	join = NULL;
-	if (link)
-	{
-		i = ft_strlen(link) - 1;
-		if (link[i] != '/')
-			join = ft_strjoin(link, "/");
-		join = ft_strmjoin(join, name, 1);
-	}
-	if (stat(join ? join : name, &buf) != -1)
-	{
-		ft_printf("%lu\n", buf.st_mtimespec.tv_sec);
-		*exec = (buf.st_mode & 73) != 0;
-		*folder = (buf.st_mode & S_IFDIR) != 0;
-	}
-	else
-		back = FALSE;
-	free(join);
-	return (back);
-}
-
-t_bool	get_stats(char *link, char *name, t_stat *buf)
-{
-	t_bool	back;
-	int		i;
-	char	*join;
-
-	back = TRUE;
-	join = NULL;
-	if (link)
-	{
-		i = ft_strlen(link) - 1;
-		if (link[i] != '/')
-			join = ft_strjoin(link, "/");
-		join = ft_strmjoin(join, name, 1);
-	}
-	if (stat(join ? join : name, buf) == -1)
-		back = FALSE;
-	free(join);
-	return (back);
-}
 
 void	simple_print(t_container *contain)
 {
@@ -90,16 +41,11 @@ int		main(int ac, char **av)
 		args(&data, ac - i, av + i);
 	else
 		test_link(&data, ".");
-		// handle_folder(&data, ".");
-		// ft_printf("pas arg\n");// arg = '.'
-	// ft_printf("%p\n", data.container_dir);
 	del_t_errors(&(data.errors));
-	display_files(&data.container_files, data.max_lenght, data.nb_files);
-	get_folders(&data, &data.container_dir);
-	// simple_print(data.container_dir);
-	del_t_containers(&data.container_dir);
-	del_t_containers(&data.container_files);
-	// handle_folders(&data);
+	display_folder(&data, data.files);
+	// if (data.files)//to protect
+	// 	display_files(&data.files, data.files->len_max, data.files->nb_files);
+	get_folders(&data, &data.folders);
 	return (0);
 }
 

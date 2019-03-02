@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/27 16:26:47 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 19:24:54 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/03 00:13:10 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ static char		*get_sym_link(char *link)
 	return (ft_strdup(buf));
 }
 
-static t_bool	get_data(t_data *data, char *link, t_file *new, t_folder *folder)
+t_bool	get_data(t_data *data, char *link, t_file *new, t_folder *folder)
 {
 	t_stat	buf;
 	size_t	len;
@@ -106,10 +106,12 @@ static t_bool	get_data(t_data *data, char *link, t_file *new, t_folder *folder)
 	if (lstat(new->link, &buf) == -1)
 		return (FALSE);
 	// new_t_file(&new, link);
+	new->name = ft_strdup(link);
 	if (data->options & (OPTION_L | OPTION_T))
 		new->time = buf.st_mtimespec.tv_sec;
 	if (data->options & (OPTION_L))
 	{
+		folder->blocks += buf.st_blocks;
 		new->name = ft_strdup(link);
 		new->type = get_type(buf.st_mode);
 		new->rights = get_rights(buf.st_mode);
@@ -119,6 +121,8 @@ static t_bool	get_data(t_data *data, char *link, t_file *new, t_folder *folder)
 		new->uid = get_uid(&buf, folder);
 		new->gid = get_gid(&buf, folder);
 		new->size = buf.st_size;
+		if (folder->size_len < (len = ft_nbr_len(buf.st_size)))
+			folder->size_len = len;
 		if (new->type == 'l')
 			new->sym_link = get_sym_link(new->link);
 	}
@@ -162,21 +166,13 @@ static t_bool	handle_folder(t_data *data, t_folder *folder)
 	return (TRUE);
 }
 
-static t_bool	init_folder(t_data *data, t_container *contain)
+t_bool	get_folders(t_data *data, t_folder **folders)
 {
-	t_folder *folder;
-
-	new_t_folder(&folder, contain->name, contain->dir);
-	return (handle_folder(data, folder));
-}
-
-t_bool	get_folders(t_data *data, t_container **contains)
-{
-	while (*contains)
+	while (*folders)
 	{
-		if (!(init_folder(data, *contains)))
+		if (!(handle_folder(data, *folders)))
 			return (FALSE);
-		del_t_container(contains);
+		del_t_folder(folders);
 	}
 	return (TRUE);
 }

@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/02 10:15:45 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 10:26:16 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/03 00:32:07 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,20 @@ void		files_by_time(t_data *data, t_file **lst, t_file *new)
 	new->next = *lst;
 	*lst = new;
 }
+
+/*
+********************************************************************************
+**	Function: sort_files_by_time
+**	----------------
+**		Place a file in the list at the right place by last time of modification
+**
+**		file: the list of files
+**		new: the new file
+**	****
+**
+**   returns: nothing
+********************************************************************************
+*/
 
 void		files_by_name(t_data *data, t_file **lst, t_file *new)
 {

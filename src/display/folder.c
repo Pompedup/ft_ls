@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/01 17:47:53 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 10:39:27 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/03 00:26:56 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,11 @@ void	display_l(t_folder *folder)
 	t_file	*file;
 	char	buf[1];
 
+	if (!(folder->files))
+		return ;
 	file = folder->files;
 	*buf = '\0';
+	ft_printf("total %zu\n", folder->blocks);
 	while (file)
 	{
 		ft_printf("%c", file->type);
@@ -47,7 +50,7 @@ void	display_l(t_folder *folder)
 		ft_printf("%*hu ", folder->link_len + 1, file->nb_links);
 		ft_printf("%-*s", folder->uid_len + 1, file->uid);
 		ft_printf(" %-*s", folder->gid_len + 1, file->gid);
-		ft_printf("%*lld", 8, file->size);
+		ft_printf("%*lld", folder->size_len + 1, file->size);
 		ft_printf("%*.*s", 13, 12, ctime(&file->time) + 4);
 		ft_printf(" \033[%sm", get_color(buf, file->type, file->rights));
 		ft_printf("%s\033[0m", file->name);
@@ -65,6 +68,8 @@ void	display_l(t_folder *folder)
 
 void	display_folder(t_data *data, t_folder *folder)
 {
+	if (!folder)
+		return ;
 	if (data->options & OPTION_L)
 		display_l(folder);
 }

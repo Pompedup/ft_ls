@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 19:21:26 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/03 00:14:00 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,11 @@ struct	s_folder
 	time_t			time;
 	size_t			len_max;
 	size_t			nb_files;
+	size_t			blocks;
 	size_t			uid_len;
 	size_t			gid_len;
 	size_t			link_len;
+	size_t			size_len;
 	t_folder		*next;
 };
 
@@ -177,11 +179,14 @@ void		container_by_time(t_data *data, t_container **lst, t_container *new);
 void		container_by_name(t_data *data, t_container **lst, t_container *new);
 
 void	test_link(t_data *data, char *link);
-void	args(t_data *data, int ac, char **av);
+t_bool	args(t_data *data, int ac, char **av);
 
-void	display_files(t_container **files, size_t max_lenght, size_t nb_files);
+void	display_files(t_folder **files, size_t max_lenght, size_t nb_files);
 
-t_bool	get_folders(t_data *data, t_container **folders);
+
+t_bool	get_data(t_data *data, char *link, t_file *new, t_folder *folder);
+t_bool	get_folders(t_data *data, t_folder **folders);
+
 
 void	display_folder(t_data *data, t_folder *folder);
 

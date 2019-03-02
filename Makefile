@@ -6,7 +6,7 @@
 #    By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/03 18:57:57 by abezanni          #+#    #+#              #
-#    Updated: 2019/03/02 10:43:13 by abezanni         ###   ########.fr        #
+#    Updated: 2019/03/03 00:34:35 by abezanni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,8 +24,7 @@ INCLUDE =		-I ./inc
 
 GET =			folder.c\
 
-STRUCT =		container.c\
-				file.c\
+STRUCT =		file.c\
 				folder.c\
 				error.c\
 
@@ -36,11 +35,7 @@ DISPLAY =		adjust.c\
 				right_size.c\
 
 HANDLE =		args.c\
-				file.c\
-				folder.c\
-				open_dirs.c\
 				options.c\
-				sort.c\
 
 OPTIONS =		reverse.c\
 
