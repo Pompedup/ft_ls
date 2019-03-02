@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/25 14:58:06 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 19:25:11 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/02 19:29:28 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,11 @@ t_bool	is_file(t_data *data, char *link)
 	if (!(time = get_time(link)))
 		return (FALSE);
 	new_t_file(&new, ft_strdup(link));
-	if ((len = ft_strlen(link)) > data->max_lenght)
-		data->max_lenght = len + 1;
-	data->nb_files++;
+	if (!(get_data(data, link, new, data->files)))
+		return (FALSE);
+	if ((len = ft_strlen(link)) > data->files->len_max)
+		data->files->len_max = len;
+	data->files->nb_files++;
 	if (data->options & OPTION_T)
 		new->time = time;
 	sort_files(data, &data->files->files, new);
