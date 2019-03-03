@@ -6,7 +6,7 @@
 #    By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/03 18:57:57 by abezanni          #+#    #+#              #
-#    Updated: 2019/03/03 00:34:35 by abezanni         ###   ########.fr        #
+#    Updated: 2019/03/03 17:02:46 by abezanni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,13 +22,16 @@ OBJ =			$(SRC:.c=.o)
 
 INCLUDE =		-I ./inc
 
-GET =			folder.c\
+GET =			file.c\
+				folder.c\
+				option_l.c\
 
 STRUCT =		file.c\
 				folder.c\
 				error.c\
 
 DISPLAY =		adjust.c\
+				colomn.c\
 				display.c\
 				files.c\
 				folder.c\
@@ -37,17 +40,13 @@ DISPLAY =		adjust.c\
 HANDLE =		args.c\
 				options.c\
 
-OPTIONS =		reverse.c\
-
 SORT =			files.c\
 				folders.c\
 
 RACINE =		ft_ls.c\
-				step.c\
 				$(addprefix display/, $(DISPLAY))\
 				$(addprefix get/, $(GET))\
 				$(addprefix handle/, $(HANDLE))\
-				$(addprefix options/, $(OPTIONS))\
 				$(addprefix struct/, $(STRUCT))\
 				$(addprefix sort/, $(SORT))\
 

@@ -6,45 +6,34 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/03 00:27:15 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/03 17:58:11 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
-
-void	simple_print(t_container *contain)
-{
-	char *test;
-
-	while (contain)
-	{
-		test = ctime(&contain->time);
-		*(ft_strchr(test, '\n')) = '\0';
-		ft_printf("\033[32m%s - %s - %p\n", test, contain->name, contain->dir);
-		contain = contain->next;
-	}
-}
 
 int		main(int ac, char **av)
 {
 	t_data	data;
 	int		i;
 
-	init(&data, &i);
+	data = (t_data){NULL, NULL, 0, 0, 0, NULL, NULL, NULL, FALSE, FALSE, 0};
+	i = 1;
 	if (i < ac && *av[i] == '-')
 	{
 		if ((data.options = options(av[i] + 1)) == -1)
 			return (0);
 		i++;
+		data.len_time = data.options & OPTION_BIGT ? 20 : 12;
 	}
 	if (i < ac)
 		args(&data, ac - i, av + i);
 	else
 		test_link(&data, ".");
+	if (data.folders && (data.folders->next || data.errors || data.files))
+		data.print_name = TRUE;
 	del_t_errors(&(data.errors));
 	display_folder(&data, data.files);
-	// if (data.files)//to protect
-	// 	display_files(&data.files, data.files->len_max, data.files->nb_files);
 	get_folders(&data, &data.folders);
 	return (0);
 }
