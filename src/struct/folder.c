@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 18:36:17 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/03 15:04:19 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/04 15:19:17 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	del_t_folder(t_folder **current)
 	to_free = *current;
 	*current = (*current)->next;
 	free(to_free->name);
-	closedir(to_free->dir);
+	// closedir(to_free->dir);
 	del_t_files(&to_free->files);
 	del_t_folders(&to_free->subfolders);
 	free(to_free);

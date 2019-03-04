@@ -6,11 +6,12 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/01 17:47:53 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/03 18:12:47 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/04 15:25:39 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
+#include <sys/acl.h>
 
 char	*get_color(char type, char *rights, int options)
 {
@@ -45,20 +46,29 @@ char	*too_old(time_t mytime)
 	return (in_letter);
 }
 
+char	get_attribute(char *path)
+{
+	if (listxattr(path, NULL, 0, 0) > 0)
+		return ('@');
+	if (acl_get_file(path, ACL_TYPE_EXTENDED))
+		return ('+');
+	return (' ');
+}
+
 void	display_l(t_folder *folder, t_file *file, char *color, size_t len_time)
 {
 	if (!(file->type == 'l'))
 		ft_printf(BASIC_L, file->type,\
-			file->rights, ' ', folder->link_len + 1, file->nb_links\
+			file->rights, get_attribute(file->link), folder->link_len + 1, file->nb_links\
 			, folder->uid_len + 1, file->uid, folder->gid_len + 1, file->gid\
 			, folder->size_len + 1, file->size, len_time, too_old(file->time) + 4\
 			, color, file->name, *color ? END_COLOR : NO_COLOR);
 	else
 		ft_printf(SYM_LINK_L, file->type,\
-			file->rights, ' ', folder->link_len + 1, file->nb_links\
+			file->rights, get_attribute(file->link), folder->link_len + 1, file->nb_links\
 			, folder->uid_len + 1, file->uid, folder->gid_len + 1, file->gid\
 			, folder->size_len + 1, file->size, len_time, too_old(file->time) + 4\
-			, color, file->name, file->sym_link, *color ? END_COLOR : NO_COLOR);
+			, color, file->name, *color ? END_COLOR : NO_COLOR, file->sym_link);
 }
 
 void	display_line(int options, t_folder *folder, size_t len_time)

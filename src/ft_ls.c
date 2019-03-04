@@ -6,30 +6,39 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/03 17:58:11 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/04 12:37:54 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int		main(int ac, char **av)
+t_bool	parsing(int ac, char **av, t_data *data)
 {
-	t_data	data;
 	int		i;
+	t_bool	ret;
 
-	data = (t_data){NULL, NULL, 0, 0, 0, NULL, NULL, NULL, FALSE, FALSE, 0};
 	i = 1;
 	if (i < ac && *av[i] == '-')
 	{
-		if ((data.options = options(av[i] + 1)) == -1)
+		if ((data->options = options(av[i] + 1)) == -1)
 			return (0);
 		i++;
-		data.len_time = data.options & OPTION_BIGT ? 20 : 12;
+		data->len_time = data->options & OPTION_BIGT ? 20 : 12;
 	}
 	if (i < ac)
-		args(&data, ac - i, av + i);
+		ret = args(data, ac - i, av + i);
 	else
-		test_link(&data, ".");
+		ret = test_link(data, ".");
+	return (ret);
+}
+
+int		main(int ac, char **av)
+{
+	t_data	data;
+
+	data = (t_data){NULL, NULL, 0, 0, 0, NULL, NULL, NULL, FALSE, FALSE, 0};
+	if (!(parsing(ac, av, &data)))
+		return (0);
 	if (data.folders && (data.folders->next || data.errors || data.files))
 		data.print_name = TRUE;
 	del_t_errors(&(data.errors));

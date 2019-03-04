@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/03 17:00:56 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/03 18:51:24 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/04 12:34:08 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void	adjust(t_folder *folder, size_t len_col)
 {
 	size_t	tmp;
 	size_t	nb_lines;
-	size_t	lines_full;
+	// size_t	lines_full;
 
 	tmp = len_col / (folder->len_max + 1);
 	if (!tmp)
@@ -140,8 +140,8 @@ void	adjust(t_folder *folder, size_t len_col)
 	nb_lines = folder->nb_files / tmp + (folder->nb_files % tmp > 0);
 	tmp = folder->nb_files / nb_lines + (folder->nb_files % nb_lines > 0);
 	sort_by_line(&folder->files, nb_lines - 1);
-	lines_full = nb_line_file(nb_lines, folder->nb_files) - 1;
-	repeat(folder, lines_full, tmp);
+	// lines_full = nb_line_file(nb_lines, folder->nb_files) - 1;
+	// repeat(folder, lines_full, tmp);
 }
 
 /*
@@ -160,7 +160,7 @@ void	adjust(t_folder *folder, size_t len_col)
 ********************************************************************************
 */
 
-int		nb_line_file(int nb_lines, int word_tot)
+int		nb_full_line(int nb_lines, int word_tot)
 {
 	int	words_by_line;
 	int	nb_word_full;
@@ -170,7 +170,7 @@ int		nb_line_file(int nb_lines, int word_tot)
 	return (nb_lines - (nb_word_full - word_tot));
 }
 
-void	display_multi_colomn(size_t len, t_file **files, size_t nb_colomn)
+void	display_multi_colomn(size_t len, t_file **files, size_t nb_colomn, size_t lines_full)
 {
 	size_t	i;
 
@@ -180,30 +180,36 @@ void	display_multi_colomn(size_t len, t_file **files, size_t nb_colomn)
 		ft_printf("%-*s ", len, (*files)->name);
 		del_t_file(files);
 		if (++i % nb_colomn == 0 || !*files)
+		{
 			ft_printf("\n");
+			if ((--lines_full) == 0)
+			{
+				nb_colomn--;
+				i--;
+			}
+		}
 	}
 }
 
-void	multi_colomn(t_folder *folder, size_t nb_colomn, unsigned short max)
+void	multi_colomn(t_folder *folder, size_t nb_colomn)
 {
 	size_t	nb_lines;
 	size_t	lines_full;
 	size_t	real_colomn;
 
-	(void)max;
-	// tmp = folder->nb_files;
 	real_colomn = folder->nb_files;
+	lines_full = 1;
 	if (nb_colomn < folder->nb_files)
 	{
 		nb_lines = folder->nb_files / nb_colomn + (folder->nb_files % nb_colomn > 0);
 		real_colomn = folder->nb_files / nb_lines + (folder->nb_files % nb_lines > 0);
 		sort_by_line(&folder->files, nb_lines - 1);
 		// tmp = folder->nb_files / nb_lines + (folder->nb_files % nb_lines > 0);
-		ft_printf("%zu - %zu - %zu\n", real_colomn, nb_lines, folder->nb_files);
-		// lines_full = nb_line_file(nb_lines, folder->nb_files) - 1;
+		// ft_printf("colomn %zu - lines %zu - files %zu\n", real_colomn, nb_lines, folder->nb_files);
+		lines_full = nb_full_line(nb_lines, folder->nb_files) - 1;//real_colomn
 		// repeat(folder, lines_full, tmp);
 	}
-	display_multi_colomn(folder->len_max, &folder->files, real_colomn - 1);
+	display_multi_colomn(folder->len_max, &folder->files, real_colomn, lines_full);
 }
 
 void	option_1(int options, t_file **files)
@@ -226,12 +232,15 @@ void	display_column(int options, t_folder *folder)
 	size_t	nb_colomn;
     struct winsize w;
 
+	size_t test;
+
+	test = w.ws_col;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 	nb_colomn = w.ws_col / (folder->len_max + 1);
 	if (options & OPTION_1 || nb_colomn <= 1)
 		option_1(options, &folder->files);
 	else
-		multi_colomn(folder, nb_colomn, w.ws_col);
+		multi_colomn(folder, nb_colomn);
 	// else
 		// right_size(folder, folder->files);
 	len = w.ws_col;
