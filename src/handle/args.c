@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/25 14:58:06 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/04 12:37:03 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/04 16:02:53 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ time_t	get_time(char *link)
 	return (0);
 }
 
-int	is_dir(t_data *data, t_folder **folders, char *link)
+int	is_dir(t_data *data, t_folder **folders, char *link, t_bool force)
 {
 	DIR			*dir;
 	t_folder	*new;
 
-	if (!(dir = opendir(link)))
+	if (!(dir = opendir(link)) && !force)
 		return (0);
 	new_t_folder(&new, ft_strdup(link), dir);
 	if (!new)
@@ -34,7 +34,7 @@ int	is_dir(t_data *data, t_folder **folders, char *link)
 	if (data->options & OPTION_T)
 		new->time = get_time(link);
 	sort_folders(data, folders, new);
-	return (1);
+	return (dir != NULL);
 }
 
 int	is_file(t_data *data, char *link)
@@ -65,7 +65,7 @@ t_bool	test_link(t_data *data, char *link)
 {
 	int ret;
 	//-l readlink endby/
-	if (!(ret = is_dir(data, &data->folders, link)))
+	if (!(ret = is_dir(data, &data->folders, link, FALSE)))
 		if (!(ret = is_file(data, link)))
 			new_t_error(&data->errors, link);
 	return (ret != -1);

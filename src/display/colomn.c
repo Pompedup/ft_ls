@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/03 17:00:56 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/04 12:34:08 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/04 17:56:02 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,12 +201,12 @@ void	multi_colomn(t_folder *folder, size_t nb_colomn)
 	lines_full = 1;
 	if (nb_colomn < folder->nb_files)
 	{
-		nb_lines = folder->nb_files / nb_colomn + (folder->nb_files % nb_colomn > 0);
+		ft_printf("%zu\n", nb_lines = folder->nb_files / nb_colomn + (folder->nb_files % nb_colomn > 0));
 		real_colomn = folder->nb_files / nb_lines + (folder->nb_files % nb_lines > 0);
 		sort_by_line(&folder->files, nb_lines - 1);
 		// tmp = folder->nb_files / nb_lines + (folder->nb_files % nb_lines > 0);
 		// ft_printf("colomn %zu - lines %zu - files %zu\n", real_colomn, nb_lines, folder->nb_files);
-		lines_full = nb_full_line(nb_lines, folder->nb_files) - 1;//real_colomn
+		ft_printf("%zu\n", lines_full = nb_full_line(nb_lines, folder->nb_files));//real_colomn
 		// repeat(folder, lines_full, tmp);
 	}
 	display_multi_colomn(folder->len_max, &folder->files, real_colomn, lines_full);

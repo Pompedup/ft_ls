@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/04 15:00:00 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/04 17:09:47 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ void		container_by_name(t_data *data, t_container **lst, t_container *new);
 
 
 
-int		is_dir(t_data *data, t_folder **folders, char *link);
+int		is_dir(t_data *data, t_folder **folders, char *link, t_bool force);
 t_bool	test_link(t_data *data, char *link);
 t_bool	args(t_data *data, int ac, char **av);
 

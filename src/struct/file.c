@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 18:32:08 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/02 10:14:11 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/04 17:11:34 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@ void	del_t_file(t_file **current)
 
 	to_free = *current;
 	free((*current)->name);
+	free((*current)->link);
+	free((*current)->rights);
+	free((*current)->uid);
+	free((*current)->gid);
+	free((*current)->sym_link);
 	*current = (*current)->next;
 	free(to_free);
 }
