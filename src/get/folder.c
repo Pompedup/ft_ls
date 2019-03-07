@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/27 16:26:47 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/04 16:01:26 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/07 15:23:10 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ static t_bool	handle_folder(t_data *data, t_folder **folder)
 			sort_files(data, &(*folder)->files, file);
 			if (dirent->d_namlen > (*folder)->len_max)
 				(*folder)->len_max = dirent->d_namlen;
-			// perror("here : ");//ft_fprintf(2, "ERROR\n");
 			(*folder)->nb_files++;
 		}
 	}

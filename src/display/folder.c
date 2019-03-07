@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/01 17:47:53 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/05 17:54:29 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/07 16:55:21 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 
 char	*get_color(char type, char *rights, int options)
 {
+	if (rights[8] == 't')
+		return (EXEC_COLOR);
 	if (options & OPTION_Z)
 		return (NO_COLOR);
 	if (type == 'd')
@@ -60,7 +62,8 @@ char	get_attribute(char *path, char type)
 
 void	display_l(t_folder *folder, t_file *file, char *color, size_t len_time)
 {
-	char buf[100000];
+	char	buf[100000];
+	int		ret;
 	if (!(file->type == 'l'))
 		ft_printf(BASIC_L, file->type,\
 			file->rights, get_attribute(file->link, file->type), folder->link_len + 1, file->nb_links\
@@ -69,7 +72,8 @@ void	display_l(t_folder *folder, t_file *file, char *color, size_t len_time)
 			, color, file->name, *color ? END_COLOR : NO_COLOR);
 	else
 	{
-		ft_printf("%zu\n", readlink(file->link, buf, 100000));
+		ret = readlink(file->link, buf, 100000);
+		buf[ret] = '\0';
 		ft_printf(SYM_LINK_L, file->type,\
 			file->rights, get_attribute(file->link, file->type), folder->link_len + 1, file->nb_links\
 			, folder->uid_len + 1, file->uid, folder->gid_len + 1, file->gid\
@@ -96,8 +100,9 @@ void	display_line(t_data *data, int options, t_folder *folder, size_t len_time)
 		display_l(folder, file, color, len_time);
 		if ((ft_strcmp(".", file->name) && ft_strcmp("..", file->name)))
 			if (options & OPTION_BIGR && file->type == 'd')
-				if (is_dir(data, &folder->subfolders, file->link, TRUE) == 0)
-					ft_fprintf(2, "ls: %s: %s\n", file->name, strerror(errno));
+				if (add_dir(data, &folder->subfolders, file->link, file->time) == -1)
+					exit(0);
+					// ft_fprintf(2, "ft_ls: %s: %s\n", file->name, strerror(errno));
 		file = file->next;
 	}
 }
@@ -106,12 +111,17 @@ void	display_folder(t_data *data, t_folder *folder)
 {
 	if (!folder)
 		return ;
+	// ft_printf("%s -- \n", (folder)->name);
 	if (data->already_print)
 		ft_printf("\n%s:\n", folder->name);
-	else if (data->print_name && folder->dir)
+	else if (data->print_name)
 		ft_printf("%s\n", folder->name);
+	data->already_print = TRUE;
 	if (!folder->dir && !folder->files)
+	{
+		ft_fprintf(2, "ft_ls: %s: %s\n", folder->name, strerror(errno));
 		return ;
+	}
 	if (data->options & OPTION_L)
 		display_line(data, data->options, folder, data->len_time);
 	else

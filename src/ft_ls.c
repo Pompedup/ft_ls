@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:43:16 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/05 17:55:51 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/07 15:16:38 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@ int		main(int ac, char **av)
     struct winsize	w;
 	t_data			data;
 
-	data = (t_data){NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, FALSE, FALSE, 0};
+	data = (t_data){NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, FALSE, FALSE, 0};
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 	data.ws_col = w.ws_col;
 	if (!(parsing(ac, av, &data)))
 		return (0);
-	if (data.folders && (data.folders->next || data.errors || data.files))
+	if (data.folders && (data.folders->next || data.unknow || data.files))
 		data.print_name = TRUE;
-	del_t_errors(&(data.errors));
+	del_t_errors(&(data.unknow));
 	display_folder(&data, data.files);
 	get_folders(&data, &data.folders);
 	return (0);

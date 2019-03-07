@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/05 17:54:39 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/07 15:06:09 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # define OPTION_1		OPTION_Z << 1
 # define USAGE_PART1	"./ft_ls: illegal option -- %c\n"
 # define USAGE_PART2	"usage: ./ft_ls [-%s] [file ...]\n"
+// # define NT_EXIST
 # define USAGE 			USAGE_PART1 USAGE_PART2
 # define DIR_COLOR		"\033[1;36m"
 # define LNK_COLOR		"\033[35m"
@@ -127,7 +128,8 @@ typedef struct	s_data
 	size_t			ws_col;
 	t_folder		*folders;//
 	t_folder		*files;//
-	t_error			*errors;
+	t_error			*unknow;
+	t_error			*not_open;
 	t_bool			print_name;
 	t_bool			already_print;
 	int				options;
@@ -223,6 +225,13 @@ t_bool	get_option_l(t_stat	*buf, t_file *new, t_folder *folder);
 void	display_column(size_t ws_col, int options, t_folder *folder);
 
 char	*get_color(char type, char *rights, int options);
+
+int	add_dir(t_data *data, t_folder **folders, char *link, time_t time);
+t_bool	link_dir(char *link, int options);
+int		is_existing(t_data *data, char *link);
+t_bool	test_link(t_data *data, char *link);
+
+
 
 
 #endif

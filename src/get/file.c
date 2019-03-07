@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/03 12:30:42 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/03 17:35:38 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/07 16:27:43 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ static char		*get_rights(mode_t mode)
 			rights[8 - i] = get_signe(i);
 		else
 			rights[8 - i] = '-';
+		if (i == 0 && mode & S_ISVTX)
+			rights[8 - i] = 't';
 		i++;
 	}
 	return (rights);
