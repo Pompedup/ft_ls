@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/01 17:47:53 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/04 17:46:48 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/05 17:54:29 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,6 @@ void	display_folder(t_data *data, t_folder *folder)
 	if (data->options & OPTION_L)
 		display_line(data, data->options, folder, data->len_time);
 	else
-		display_column(data->options, folder);
+		display_column(data->ws_col, data->options, folder);
 	data->already_print = TRUE;
 }

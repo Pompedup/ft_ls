@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/21 17:29:59 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/04 17:09:47 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/05 17:54:39 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ typedef struct	s_data
 	size_t			nb_files;
 	size_t			max_lenght;
 	size_t			len_time;
+	size_t			ws_col;
 	t_folder		*folders;//
 	t_folder		*files;//
 	t_error			*errors;
@@ -219,7 +220,7 @@ void		sort_folders(t_data *data, t_folder **folders, t_folder *new);
 t_bool	get_data(t_data *data, char *link, t_file *new, t_folder *folder);
 t_bool	get_option_l(t_stat	*buf, t_file *new, t_folder *folder);
 
-void	display_column(int options, t_folder *folder);
+void	display_column(size_t ws_col, int options, t_folder *folder);
 
 char	*get_color(char type, char *rights, int options);
 

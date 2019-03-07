@@ -6,7 +6,7 @@
 /*   By: abezanni <abezanni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/03 17:00:56 by abezanni          #+#    #+#             */
-/*   Updated: 2019/03/04 17:56:02 by abezanni         ###   ########.fr       */
+/*   Updated: 2019/03/05 17:55:56 by abezanni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,25 +224,23 @@ void	option_1(int options, t_file **files)
 	}
 }
 
-void	display_column(int options, t_folder *folder)
+void	display_column(size_t ws_col, int options, t_folder *folder)
 {
+	// size_t	len;
+	size_t	nb_colomn;
+
+	// size_t test;
+
+	// test = w.ws_col;
 	if (!folder->files)
 		return ;
-	size_t	len;
-	size_t	nb_colomn;
-    struct winsize w;
-
-	size_t test;
-
-	test = w.ws_col;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-	nb_colomn = w.ws_col / (folder->len_max + 1);
+	nb_colomn = ws_col / (folder->len_max + 1);
 	if (options & OPTION_1 || nb_colomn <= 1)
 		option_1(options, &folder->files);
 	else
 		multi_colomn(folder, nb_colomn);
 	// else
 		// right_size(folder, folder->files);
-	len = w.ws_col;
+	// len = w.ws_col;
 	// adjust(folder, len);
 }
